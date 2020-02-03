@@ -14,7 +14,9 @@ I really don't care about what you think about
 these. I just use them.
 
 Here are some explanations per utility. Right now
-there is only one but I will be publishing others.
+there this is not a big repository, but I will be
+publishing other utilities, once I sort everything
+out.
 
 
 nap
