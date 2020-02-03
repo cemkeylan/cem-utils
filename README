@@ -20,7 +20,7 @@ there is only one but I will be publishing others.
 nap
 ---
 
-Literally Leah's zzz with only suspend feature.
+Literally Leah's zzz[1] with only suspend feature.
 It is compatible with zzz so it can read zzz.d
 Why don't I add hybernation stuff? Because my
 computer cannot hybernate.
@@ -35,3 +35,25 @@ To install run, as root if necessary
 
 This will create the /etc/zzz.d directories and
 install nap
+
+
+nap-hooks
+---------
+
+POSIX-compliant and simplified zzz-user-hooks[2]. 
+Does not support Wayland. Works with sbase-ubase.
+Is a shell script instead of a bash script. 32
+lines of shell code instead of 112.
+
+To install run, as root if necessary
+
+    make -C nap-hooks install
+
+This will create /etc/zzz.d/resume/99-onresume and
+/etc/zzz.d/suspend/99-onsuspend
+
+You can add user hooks to ~/.onsuspend and
+~/.onresume to get them working.
+
+[1]: http://git.vuxu.org/runit-void/tree/zzz
+[2]: https://github.com/bahamas10/zzz-user-hooks
