@@ -21,12 +21,6 @@ env="DISPLAY=$display"
 [ -e "$home/.Xauthority" ] && env="$env XAUTHORITY=$home/.Xauthority" || error "Could not find user's Xauthority file"
 
 case ${0##*/} in 
-	99-onresume)
-		out "On resume"
-		su -c "$env $home/.onresume" "$user"
-		;;
-	99-onsuspend)
-		out "On suspend"
-		su -c "$env $home/.onsuspend" "$user"
-		;;
+	99-onresume) out "Running $home/.onresume" ; su -c "$env $home/.onresume" "$user" ;;
+	99-onsuspend) out "Running $home/.onsuspend" ; su -c "$env $home/.onsuspend" "$user" ;;
 esac
