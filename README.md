@@ -57,5 +57,25 @@ This will create /etc/zzz.d/resume/99-onresume and
 You can add user hooks to ~/.onsuspend and
 ~/.onresume to get them working.
 
+
+dwm-notify-send
+---------------
+
+A simple notify-send command to use dwm's bar for
+displaying notification. It must work with every bar
+that uses the WMNAME function, but I have only tested
+it on dwm bar.
+
+The delimiter ('-' by default) can be edited from the
+`NOTIFY_SEND_DELIMETER` environment variable. This way
+you can also make use of the second bar, if it exists.
+
+**Dependencies**
+
+* A bar with WMNAME function.
+* xsetroot
+* timeout
+* POSIX sh
+
 [1]: http://git.vuxu.org/runit-void/tree/zzz
 [2]: https://github.com/bahamas10/zzz-user-hooks

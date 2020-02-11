@@ -1,0 +1,31 @@
+#!/bin/sh
+[ "$1" ] || {
+cat <<EOF
+usage: ${0##*/} [-t seconds] [-u arg (ignored)] title description
+
+POSIX sh replacement for notify-send(1) on dwm(1)
+
+You can change the delimiter ('-' by default) from your environment
+by adding a NOTIFY_SEND_DELIMITER variable. This way you can also
+make use of the two bar patches on dwm.
+
+EOF
+exit 1
+}
+# O="$(getop -l app-name:
+while getopts 't:u:' flag ; do
+	case "$flag" in
+		t) TIME=$OPTARG ; shift 2 ;;
+		u) _=$OPTARG ; shift 2 ;;
+		*) printf '%s is not supported\n' "$flag" ; exit 1 ;;
+	esac
+done
+
+#
+NOTIFY_SEND_DELIMITER="${NOTIFY_SEND_DELIMITER--}"
+TIME=${TIME-3}
+
+# This is the way we display notifications. You may
+# not like it, but this is what peak performance looks like
+
+timeout "$TIME" sh -c "printf \"\$\$\" > /tmp/notify-$(id -u) ; while :; do xsetroot -name ' $1 $NOTIFY_SEND_DELIMITER $2 ' ; done" &
