@@ -1,9 +1,19 @@
 #!/bin/sh
-[ "$1" ] || {
+usage(){
 cat <<EOF
-usage: ${0##*/} [-t seconds] [-u arg (ignored)] title description
+usage: ${0##*/} [OPTION...] <SUMMARY> [BODY]
 
 POSIX sh replacement for notify-send(1) on dwm(1)
+
+Options:
+
+-t, --expire-time=TIME
+-a, --app-name=APP_NAME
+
+Options that exist for compatibility (but are ignored):
+
+-u, --urgency=LEVEL
+-i, --icon=ICON
 
 You can change the delimiter ('-' by default) from your environment
 by adding a NOTIFY_SEND_DELIMITER variable. This way you can also
@@ -12,20 +22,21 @@ make use of the two bar patches on dwm.
 EOF
 exit 1
 }
-# O="$(getop -l app-name:
-while getopts 't:u:' flag ; do
-	case "$flag" in
-		t) TIME=$OPTARG ; shift 2 ;;
-		u) _=$OPTARG ; shift 2 ;;
-		*) printf '%s is not supported\n' "$flag" ; exit 1 ;;
-	esac
+O="$(getopt -q -l app-name:,urgency:,expire-time:,icon: -- a:u:t:i:: "$@")" || usage
+eval set -- "$O"
+while :; do
+    case "$1" in
+        -a|--app-name) APPNAME="$2" ; shift 2 ;;
+        -t|--expire-time) TIME="$2"; shift 2 ;;
+        -u|--urgency) _="$2"; shift 2 ;;
+        -i|--icon) _="$2"; shift 2 ;;
+        --) shift; break ;;
+        *) printf '%s is not supported\n' "$1" ; exit 1 ;;
+    esac
 done
-
-#
+[ "$1" ] || usage
+[ "$APPNAME" ] && APPNAME="$APPNAME:"
 NOTIFY_SEND_DELIMITER="${NOTIFY_SEND_DELIMITER--}"
+[ "$2" ] && SUMMARY="$1 $NOTIFY_SEND_DELIMITER"
 TIME=${TIME-3}
-
-# This is the way we display notifications. You may
-# not like it, but this is what peak performance looks like
-
-timeout "$TIME" sh -c "printf \"\$\$\" > /tmp/notify-$(id -u) ; while :; do xsetroot -name ' $1 $NOTIFY_SEND_DELIMITER $2 ' ; done" &
+timeout "$TIME" sh -c "printf \"\$\$\" > /tmp/notify-$(id -u) ; while :; do xsetroot -name ' $APPNAME ${SUMMARY-$1} $2 ' ; done" &
