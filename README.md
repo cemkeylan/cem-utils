@@ -18,6 +18,12 @@ there this is not a big repository, but I will be
 publishing other utilities, once I sort everything
 out.
 
+Here is the list of programs:
+
+* nap
+* nap-hooks
+* dwm-notify-send
+
 
 nap
 ---
@@ -74,8 +80,16 @@ you can also make use of the second bar, if it exists.
 
 * A bar with WMNAME function.
 * xsetroot
+* getopt
 * timeout
 * POSIX sh
+
+To install run, as root if necessary
+
+    make -C dwm-notify-send install
+
+This will install `notify-send` and `kill-notification`
+to `/usr/local/bin`
 
 [1]: http://git.vuxu.org/runit-void/tree/zzz
 [2]: https://github.com/bahamas10/zzz-user-hooks
