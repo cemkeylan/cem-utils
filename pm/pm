@@ -23,9 +23,7 @@ case "$1" in
         rm -f "$PM_DIR/$2"
         ;;
     d|del) [ "$2" ] || usage 1 ; rm -f "$PM_DIR/$2.asc" ;;
-    l|list)
-        find "$PM_DIR" -type f -name '*.asc' 2>/dev/null || ls -1 "$PM_DIR"
-        ;;
+    l|list) { find "$PM_DIR" -type f -name '*asc' 2>/dev/null || ls -1 "$PM_DIR"/*.asc ;} | sort ;;
     s|show)
         [ "$2" ] || usage 1
         [ -r "$PM_DIR/$2.asc" ] || 
