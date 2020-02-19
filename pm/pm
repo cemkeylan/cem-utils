@@ -8,7 +8,7 @@ usage() { printf '\033[1;36m-> \033[m%s\n' "usage: ${0##*/} [a|d|l|s] [options]"
         "[d]el  <name> - Deletes given enry" \
         "[l]ist        - Lists all the passwords" \
         "[s]how <name> - Shows the given password" "" \
-        "VARIABLES:" "PM_DIR:      $PM_DIR" "PM_GPG_USER: $PM_GPG_USER" ; exit "${1:-0}" ;}
+        "VARIABLES:" "PM_DIR:      $PM_DIR" "PM_GPG_USER: $PM_GPG_USER" >&2 ; exit "${1:-0}" ;}
 
 gpg="$(command -v gpg2 || command -v gpg)" || die "gnupg cannot be found"
 case "$1" in
