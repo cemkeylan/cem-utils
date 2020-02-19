@@ -116,7 +116,7 @@ that I mean,
 * No tree view
 * Does not ask for password input (reads from stdin)
 
-Currently 34 SLOC. Supports adding/deleting/listing/showing
+Currently less than 35 LOC. Supports adding/deleting/listing/showing
 passwords. I don't intend on implementing any more features.
 You can wrap this script with something other to make use of
 it. 
