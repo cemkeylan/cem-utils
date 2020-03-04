@@ -1,0 +1,76 @@
+#!/bin/sh
+
+# KISS functions that I use. Mostly
+# for repository management.
+
+out() { printf '\033[1;36m-> \033[m%s\n' "$@" ;}
+error() { printf '\033[1;31m!> error: \033[m%s\n' "$@" >&2 ;}
+die() { error "$1" ; exit 1 ;}
+
+usage() {
+out \
+"${0##*/} [a|b|n|h] [options]" \
+"add   Commit the current directory as a new package" \
+"bump  Commit current directory with a 'package: bump to version message'" \
+"help  Print help information per function" \
+"new   Create a template package with package-name, version, and source"
+exit 1
+}
+
+help() {
+    case "$1" in
+        a|add) out "Resets git, adds current directory and commits" "with a 'package: add new package at version to repository' message" ; exit ;;
+        b|bump) out "Resets git, adds current directory and commits" "with a 'package: bump to version' message"; exit ;;
+        n|new) out "kf new <package> [version] [sources]"; exit ;;
+        h|help) out "kf help <function>" ; exit ;;
+        *) usage ;; esac
+}
+
+add() {
+    [ "$1" ] && help add
+    [ -f version ] || die "Could not find version directory, are you sure that you are on a package directory?"
+    git reset
+    git add .
+    git commit -m "$(basename "$PWD"): add new package at $(cut -d ' ' -f 1 version) to $(basename "$(dirname "$PWD")")"
+}
+
+bump() {
+    [ "$1" ] && help bump
+    [ -f version ] || die "Could not find version directory, are you sure that you are on a package directory?"
+    git reset
+    git add .
+    git commit -m "$(basename "$PWD"): bump to $(cut -d ' ' -f 1 version)"
+}
+
+new() {
+    # 1: Package name
+    # 2: Package version
+    # 3: Package source
+    [ "$1" ] || help new
+    [ -d "$1" ] && die "Package $1 already exists"
+    mkdir -p "$1" || die "Couldn't create directory to ${PWD}/${1}"
+    out "Populating build file"; {
+        printf "#!/bin/sh -e\n" > "$1/build"
+	chmod +x "$1/build"
+    }
+    [ "$2" ] && {
+        out "Populating version file with '${2%% *} 1'"
+        printf '%s 1\n' "${2%% *}" > "$1/version"
+    } || printf " 1\n" > "$1/version"
+
+    [ "$3" ] && {
+        out "Populating sources file with '$3'"
+        printf '%s\n' "$3" > "$1/sources"
+    } || :> "$1/sources"
+}
+
+mode="$1"
+shift
+
+case "$mode" in
+    a|add)  add "$@" ;;
+    b|bump) bump "$@" ;;
+    n|new) new "$@" ;;
+    h|help) help "$1" ;;
+    *) usage ;;
+esac

@@ -1,0 +1,49 @@
+#!/bin/sh
+#
+# Check repository packages for updates.
+
+[ "$KISS_PATH" ] ||
+    { printf '%s\n' 'KISS_PATH not set' >&2 ; exit 1 ;}
+
+old_IFS=$IFS
+
+printf '%s\n' "$KISS_PATH" | tr ':' '\n' | while read -r repo
+do
+    find "$repo" ! -name .git -type d -mindepth 1 -maxdepth 1
+done | (while read -r pkg ; do {
+    read -r ver _ < "$pkg/version"
+    pkg=${pkg##*/}
+
+    # Fix some package names.
+    case $pkg in
+        *-bin) fix=${pkg%%-bin} ;;
+    esac
+    
+    # Grab the repology version from the SVG file.
+    rep=$(curl -s "https://repology.org/badge/latest-versions/${fix:-$pkg}.svg")
+    rep=${rep%</text>*}
+    rep=${rep##*>}
+
+    # Skip these.
+    # shellcheck disable=2106
+    {
+        [ "${rep:--}" = - ] && continue
+        [ "$ver" = git ]    && continue
+    }
+
+    # Split the comma separated list.
+    # shellcheck disable=2086
+    {
+        IFS=', ' 
+        set -f
+        set +f -- $rep
+        IFS=$old_IFS
+    }
+
+    # Parse comma separated version lists.
+    {
+        for v; do case $v in "$ver") match=1; esac; done
+
+        [ "$match" ] || { [ "$rep" ] && printf '%s\n' "$pkg $ver -> $rep" ;}
+    }
+} & done; wait)
