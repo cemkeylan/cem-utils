@@ -2,6 +2,9 @@
 #
 # Check repository packages for updates.
 
+# Modified version of kiss-outdated from
+# kiss-contrib
+
 [ "$KISS_PATH" ] ||
     { printf '%s\n' 'KISS_PATH not set' >&2 ; exit 1 ;}
 
