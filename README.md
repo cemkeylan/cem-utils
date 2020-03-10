@@ -32,16 +32,17 @@ small list of programs:
 * nap
 * nap-hooks
 * dwm-notify-send
-* pm
 
 
 nap
 ---
 
-Literally Leah's zzz[1] with only suspend feature.
+Literally Leah's [zzz] with only suspend feature.
 It is compatible with zzz so it can read zzz.d
 Why don't I add hybernation stuff? Because my
 computer cannot hybernate.
+
+[zzz]: http://git.vuxu.org/runit-void/tree/zzz
 
 You see my point? I don't have a use for more 
 than half of the things zzz script does. So
@@ -58,10 +59,12 @@ install nap
 nap-hooks
 ---------
 
-POSIX-compliant and simplified zzz-user-hooks[2]. 
+POSIX-compliant and simplified [zzz-user-hooks]. 
 Does not support Wayland. Works with sbase-ubase.
 Is a shell script instead of a bash script. 32
 lines of shell code instead of 112.
+
+[zzz-user-hooks]: https://github.com/bahamas10/zzz-user-hooks
 
 To install run, as root if necessary
 
@@ -100,64 +103,3 @@ To install run, as root if necessary
 
 This will install `notify-send` and `kill-notification`
 to `/usr/local/bin`
-
-
-pm
---
-
-Dumb password manager with absolutely no fancy features. By
-that I mean,
-
-* No password generation
-* No git integration
-* No questions asked
-* No grepping/finding passwords
-* No clipboard support
-* No tree view
-* Does not ask for password input (reads from stdin)
-
-Currently less than 35 LOC. Supports adding/deleting/listing/showing
-passwords. I don't intend on implementing any more features.
-You can wrap this script with something other to make use of
-it. 
-
-To install run, as root if necessary
-
-    make -C pm install
-
-You really do think that asking for password for twice blah
-blah is a really important feature? Okay, then add a function
-to your shellrc/profile like this.
-
-    pmask() {
-        [ "$1" ] || return 1
-        printf 'Enter your password: '
-	read pass
-	printf 'Enter your password again: '
-	read pass2
-	if [ "$pass" = "$pass2" ] ; then
-	    printf '%s' "$pass" | pm a "$1"
-        else
-	    printf "Passwords don't match\n"
-	    return 1
-	fi
-    }
-
-You want to copy to clipboard? That's easy! You just need
-to do a `pm s passname | xclip -sel c`. You can still make
-it a function by doing this
-
-    copypass() {
-        [ "$1" ] || return 1
-	pm s "$1" | xclip -sel c
-    }
-
-The whole rationale is that you can already do that with simple
-commands. Why complicate (and possibly break) things by introducing
-them into a single script? If you want some function that is
-a must for you, implement it yourself with some script or
-a shell function. This way, it works just as you intended it.
-
-
-[1]: http://git.vuxu.org/runit-void/tree/zzz
-[2]: https://github.com/bahamas10/zzz-user-hooks
