@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+# kiss-revdepends - Display packages which depend on package.
+
+# 'cd' to the database directory as a simple way of
+# stripping the path and performing a 'basename'.
+[ "$1" ] || exit 1
+
+# Word splitting is in
+
+for repo in $(echo "$KISS_PATH" | tr ':' ' ') ; do
+
+    cd "$repo/.." ||:
+    # Use a simple 'grep' to display packages depending on '$1'.
+    grep "^$1" -- "${repo##*/}"/*/depends
+done

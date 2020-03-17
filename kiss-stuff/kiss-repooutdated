@@ -30,8 +30,9 @@ done | (while read -r pkg ; do {
     # Skip these.
     # shellcheck disable=2106
     {
-        [ "${rep:--}" = - ] && continue
-        [ "$ver" = git ]    && continue
+        [ "${rep:--}" = - ]                   && continue
+        [ "$ver" = git ] || [ "$ver" = 9999 ] && continue
+        case "$KISS_REPO_IGNORE" in *$pkg*)      continue ;; esac
     }
 
     # Split the comma separated list.
