@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # POSIX compliant version of Dave Eddy's
-# zzz-user hooks.
+# zzz-user-hooks.
 
 out() { printf '\033[1;36m-> \033[m%s\n' "$@" ;}
 error() { printf '\033[1;31m-> \033[mError: %s\n' "$@" >&2 ;}
@@ -11,8 +11,7 @@ for sock in /tmp/.X11-unix/X* ; do
 	uid=$(stat -t "$sock" | cut -d ' ' -f 6)
 	user="$(grep ":$uid:" /etc/passwd | cut -d ':' -f 1)"
 	[ "$user" ] || die "User of $sock could not be found"
-	display=${sock##*/}
-	display=":${display#X}"
+	display=":${sock##*X}"
 done
 
 home="$(grep ":$uid:" /etc/passwd | cut -d ':' -f 6 )"
