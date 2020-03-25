@@ -9,11 +9,12 @@ die() { error "$1" ; exit 1 ;}
 
 usage() {
 out \
-"${0##*/} [a|b|n|h] [options]" \
-"add   Commit the current directory as a new package" \
-"bump  Commit current directory with a 'package: bump to version message'" \
-"help  Print help information per function" \
-"new   Create a template package with package-name, version, and source"
+"${0##*/} [a|b|n|u|h] [options]" \
+"add    Commit the current directory as a new package" \
+"bump   Commit current directory with a 'package: bump to version message'" \
+"help   Print help information per function" \
+"new    Create a template package with package-name, version, and source" \
+"update Update a package with the given version number"
 exit 1
 }
 
@@ -22,6 +23,7 @@ help() {
         a|add) out "Resets git, adds current directory and commits" "with a 'package: add new package at version to repository' message" ; exit ;;
         b|bump) out "Resets git, adds current directory and commits" "with a 'package: bump to version' message"; exit ;;
         n|new) out "kf new <package> [version] [sources]"; exit ;;
+        u|update) out "Tries to update a package version with basic sed" ; exit ;;
         h|help) out "kf help <function>" ; exit ;;
         *) usage ;; esac
 }
@@ -64,6 +66,22 @@ new() {
     } || :> "$1/sources"
 }
 
+update() {
+    case "$1" in --help|help|-h) help update ;; esac
+    [ "$1" ] || help update
+    pkg="${PWD##*/}"
+    [ -f version ] || die "Could not find version file, are you sure that you are on a package directory?"
+    read -r ver _ < version
+    for file in sources version ; do out "$file" ; sed "s/$ver/$1/g" "$file" ; done
+    out "Is this correct?" "Press CTRL+C to cancel"
+    read -r _
+    sed -i "s/$ver/$1/g" sources version
+    out "Should I (c)hecksum, (b)uild, (i)nstall?"
+    read ans
+    case "$ans" in c) kiss c "$pkg" ;; b) kiss c "$pkg" && kiss b "$pkg" ;; i) kiss c "$pkg" && kiss b "$pkg" && kiss i "$pkg" ;; esac
+}
+
+
 mode="$1"
 shift
 
@@ -71,6 +89,7 @@ case "$mode" in
     a|add)  add "$@" ;;
     b|bump) bump "$@" ;;
     n|new) new "$@" ;;
+    u|update) update "$@" ;;
     h|help) help "$1" ;;
     *) usage ;;
 esac
