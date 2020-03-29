@@ -78,6 +78,7 @@ update() {
     sed -i "s/$ver/$1/g" sources version
     out "Should I (c)hecksum, (b)uild, (i)nstall?"
     read ans
+    export KISS_PATH="${PWD%/*}"
     case "$ans" in c) kiss c "$pkg" ;; b) kiss c "$pkg" && kiss b "$pkg" ;; i) kiss c "$pkg" && kiss b "$pkg" && kiss i "$pkg" ;; esac
 }
 
