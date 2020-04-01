@@ -72,10 +72,13 @@ update() {
     pkg="${PWD##*/}"
     [ -f version ] || die "Could not find version file, are you sure that you are on a package directory?"
     read -r ver _ < version
-    for file in sources version ; do out "$file" ; sed "s/$ver/$1/g" "$file" ; done
+    out "sources"
+    sed "s/$ver/$1/g" sources
+    printf 'version\n%s 1\n' "$1"
     out "Is this correct?" "Press CTRL+C to cancel"
     read -r _
-    sed -i "s/$ver/$1/g" sources version
+    sed -i "s/$ver/$1/g" sources 
+    printf '%s 1\n' "$1" > version
     out "Should I (c)hecksum, (b)uild, (i)nstall?"
     read ans
     export KISS_PATH="${PWD%/*}"
