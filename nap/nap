@@ -1,9 +1,10 @@
 #!/bin/sh
 # nap - not the full zzz, but a light one
 
-[ "$1" ] && { printf 'Usage: %s\nThere are not many options when taking a nap.\n' "${0##*/}" ; exit 1 ;}
-grep -q mem /sys/power/state || { printf "Suspend not supported.\n"; exit 1 ;}
-test -w /sys/power/state || { printf "Sleep permission denied.\n" ; exit 1 ;}
+die() { printf '%s\n' "$@" ; exit 1 ;}
+case "$1" in --help|help|-h) die "usage: nap" ; esac
+grep -q mem /sys/power/state || die "Suspend not supported"
+[ -w /sys/power/state ] || die "Sleep permission denied"
 for hook in /etc/zzz.d/suspend/* ; do [ -x "$hook" ] && "$hook" ; done
-printf mem >/sys/power/state || { printf "Could not suspend.\n" ; exit 1 ;}
+printf mem >/sys/power/state || die "Could not suspend"
 for hook in /etc/zzz.d/resume/*; do [ -x "$hook" ] && "$hook" ; done
