@@ -2,9 +2,13 @@
 # nap - not the full zzz, but a light one
 
 die() { printf '%s\n' "$@" ; exit 1 ;}
-case "$1" in --help|help|-h) die "usage: nap" ; esac
-grep -q mem /sys/power/state || die "Suspend not supported"
+case "$1" in --help|help|-h) die "usage: ${0##*/}" ; esac
+
+read -r feat < /sys/power/state
+case " $feat " in *" mem "*) ;; *) die "Suspend not supported"; esac
+
 [ -w /sys/power/state ] || die "Sleep permission denied"
-for hook in /etc/zzz.d/suspend/* ; do [ -x "$hook" ] && "$hook" ; done
-printf mem >/sys/power/state || die "Could not suspend"
-for hook in /etc/zzz.d/resume/*; do [ -x "$hook" ] && "$hook" ; done
+
+for hook in /etc/zzz.d/suspend/*; do [ -x "$hook" ] && "$hook"; done
+printf 'mem\n' >/sys/power/state || die "Could not suspend"
+for hook in /etc/zzz.d/resume/*;do [ -x "$hook" ] && "$hook"; done
